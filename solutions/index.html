@@ -22,6 +22,28 @@
       </header>
 
       <main class="p-4">
+        <div class="flex flex-col">
+          <div class="flex justify-end mb-3">
+            <select id="yearFilter" class="select select-bordered">
+              <option selected value="2021">Bundestagswahl 2021</option>
+              <option value="2017">Bundestagswahl 2017</option>
+            </select>
+          </div>
+
+          <div id="partyFilter" class="flex justify-end gap-3 mb-3">
+            <div class="form-control">
+              <label class="label cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked="checked"
+                  class="checkbox checkbox-primary mr-1"
+                />
+                <span class="label-text">Partei</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
         <div id="chart"></div>
       </main>
 
