@@ -1,0 +1,28 @@
+{
+  "name": "vi-workshop",
+  "version": "1.0.0",
+  "author": "Melvin Weiershäuser",
+  "contributors": [
+    {
+      "name": "Aileen Jurkosek"
+    }
+  ],
+  "license": "MIT",
+  "scripts": {
+    "start": "concurrently -n build,build:solutions,serve \"npm run build\" \"npm run build:solutions\" \"npm run serve\"",
+    "build": "npx tailwindcss -i ./styles.css -o ./dist/bundle.css --watch",
+    "serve": "live-server",
+    "start:solutions": "concurrently -n build,serve \"npm run build:solutions\" \"npm run serve:solutions\"",
+    "build:solutions": "npx tailwindcss -c ./solutions/tailwind.config.js -i ./solutions/styles.css -o ./solutions/dist/bundle.css --watch",
+    "serve:solutions": "live-server solutions"
+  },
+  "dependencies": {
+    "daisyui": "^2.51.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.9",
+    "concurrently": "^8.0.1",
+    "live-server": "^1.2.2",
+    "tailwindcss": "^3.3.2"
+  }
+}
