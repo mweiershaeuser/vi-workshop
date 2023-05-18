@@ -9411,6 +9411,10 @@ html {
   width: auto;
 }
 
+.w-full {
+  width: 100%;
+}
+
 .flex-shrink {
   flex-shrink: 1;
 }

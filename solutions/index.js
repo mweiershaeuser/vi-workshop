@@ -4,22 +4,30 @@ import { elections2017, elections2021, partyColours } from "./data/data.js";
 
 let dataset;
 
-let w = 800;
-let h = 400;
+let w = 0;
+let h = 0;
 
 let barPadding = 5;
+
+let chart;
 
 let svg;
 let xScale;
 
+let year;
+
 let transitionDuration = 1000;
 
-let bars;
-let labels;
-
-init();
-
 function init() {
+  chart = document.getElementById("chart");
+  calculateChartSize();
+  initChart();
+  resize();
+
+  window.addEventListener("resize", resize, false);
+}
+
+function initChart() {
   dataset = elections2021.sort((a, b) => b.result - a.result);
 
   svg = d3.select("#chart").append("svg").attr("width", w).attr("height", h);
@@ -29,7 +37,7 @@ function init() {
     .domain([0, d3.max(dataset, (d) => d.result)])
     .range([0, w]);
 
-  bars = svg
+  svg
     .selectAll("rect")
     .data(dataset)
     .enter()
@@ -43,7 +51,7 @@ function init() {
       (d) => partyColours.find((pC) => pC.party === d.party).colour
     );
 
-  labels = svg
+  svg
     .selectAll("text")
     .data(dataset)
     .enter()
@@ -55,10 +63,11 @@ function init() {
 }
 
 d3.select("#yearFilter").on("change", (event) => {
-  updateYearWithTransition(event.target.value);
+  year = event.target.value;
+  updateYearWithTransition();
 });
 
-function updateYear(year) {
+function updateYear() {
   switch (year) {
     case "2021":
       dataset = elections2021.sort((a, b) => b.result - a.result);
@@ -96,7 +105,7 @@ function updateYear(year) {
     .style("fill", "white");
 }
 
-function updateYearWithTransition(year) {
+function updateYearWithTransition() {
   switch (year) {
     case "2021":
       dataset = elections2021.sort((a, b) => b.result - a.result);
@@ -141,3 +150,36 @@ function updateYearWithTransition(year) {
 function removeParty() {}
 
 function addParty() {}
+
+function calculateChartSize() {
+  w = chart.clientWidth;
+  h = (chart.clientWidth / 2) * 1;
+}
+
+function resize() {
+  calculateChartSize();
+
+  svg.attr("width", w).attr("height", h);
+
+  xScale.range([0, w]);
+
+  svg
+    .selectAll("rect")
+    .data(dataset)
+    .transition()
+    .duration(transitionDuration)
+    .attr("x", 0)
+    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("width", (d) => xScale(d.result))
+    .attr("height", h / dataset.length - barPadding);
+
+  svg
+    .selectAll("text")
+    .data(dataset)
+    .transition()
+    .duration(transitionDuration)
+    .attr("x", 5)
+    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length));
+}
+
+document.addEventListener("DOMContentLoaded", init, false);
