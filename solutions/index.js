@@ -147,9 +147,9 @@ function updateYearWithTransition() {
     .style("fill", "white");
 }
 
-function removeParty() {}
-
 function addParty() {}
+
+function removeParty() {}
 
 function calculateChartSize() {
   w = chart.clientWidth;
