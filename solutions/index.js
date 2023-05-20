@@ -4,6 +4,8 @@ import { elections2017, elections2021, partyColours } from "./data/data.js";
 
 let dataset;
 
+let key = (d) => d.party;
+
 let w = 0;
 let h = 0;
 
@@ -28,7 +30,7 @@ function init() {
 }
 
 function initChart() {
-  dataset = elections2021.sort((a, b) => b.result - a.result);
+  dataset = [...elections2021.sort((a, b) => b.result - a.result)];
 
   svg = d3.select("#chart").append("svg").attr("width", w).attr("height", h);
 
@@ -39,7 +41,7 @@ function initChart() {
 
   svg
     .selectAll("rect")
-    .data(dataset)
+    .data(dataset, key)
     .enter()
     .append("rect")
     .attr("x", 0)
@@ -53,7 +55,7 @@ function initChart() {
 
   svg
     .selectAll("text")
-    .data(dataset)
+    .data(dataset, key)
     .enter()
     .append("text")
     .text((d) => `${d.party}: ${d.result}%`)
@@ -70,15 +72,15 @@ d3.select("#yearFilter").on("change", (event) => {
 function updateYear() {
   switch (year) {
     case "2021":
-      dataset = elections2021.sort((a, b) => b.result - a.result);
+      dataset = [...elections2021.sort((a, b) => b.result - a.result)];
       break;
 
     case "2017":
-      dataset = elections2017.sort((a, b) => b.result - a.result);
+      dataset = [...elections2017.sort((a, b) => b.result - a.result)];
       break;
 
     default:
-      dataset = elections2021.sort((a, b) => b.result - a.result);
+      dataset = [...elections2021.sort((a, b) => b.result - a.result)];
       break;
   }
 
@@ -86,7 +88,7 @@ function updateYear() {
 
   svg
     .selectAll("rect")
-    .data(dataset)
+    .data(dataset, key)
     .attr("x", 0)
     .attr("y", (d, i) => i * (h / dataset.length))
     .attr("width", (d) => xScale(d.result))
@@ -98,7 +100,7 @@ function updateYear() {
 
   svg
     .selectAll("text")
-    .data(dataset)
+    .data(dataset, key)
     .text((d) => `${d.party}: ${d.result}%`)
     .attr("x", 5)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
@@ -108,15 +110,15 @@ function updateYear() {
 function updateYearWithTransition() {
   switch (year) {
     case "2021":
-      dataset = elections2021.sort((a, b) => b.result - a.result);
+      dataset = [...elections2021.sort((a, b) => b.result - a.result)];
       break;
 
     case "2017":
-      dataset = elections2017.sort((a, b) => b.result - a.result);
+      dataset = [...elections2017.sort((a, b) => b.result - a.result)];
       break;
 
     default:
-      dataset = elections2021.sort((a, b) => b.result - a.result);
+      dataset = [...elections2021.sort((a, b) => b.result - a.result)];
       break;
   }
 
@@ -124,7 +126,7 @@ function updateYearWithTransition() {
 
   svg
     .selectAll("rect")
-    .data(dataset)
+    .data(dataset, key)
     .transition()
     .duration(transitionDuration)
     .attr("x", 0)
@@ -138,7 +140,7 @@ function updateYearWithTransition() {
 
   svg
     .selectAll("text")
-    .data(dataset)
+    .data(dataset, key)
     .transition()
     .duration(transitionDuration)
     .text((d) => `${d.party}: ${d.result}%`)
@@ -147,9 +149,132 @@ function updateYearWithTransition() {
     .style("fill", "white");
 }
 
-function addParty() {}
+d3.selectAll(".partyFilter").on("click", (event) => {
+  if (event.target.checked) {
+    addParty(event.target.value);
+  } else {
+    removeParty(event.target.value);
+  }
+});
 
-function removeParty() {}
+function addParty(party) {
+  let partyResultToAdd;
+  switch (year) {
+    case "2021":
+      partyResultToAdd = elections2021.find((r) => r.party === party);
+      break;
+
+    case "2017":
+      partyResultToAdd = elections2017.find((r) => r.party === party);
+      break;
+
+    default:
+      partyResultToAdd = elections2021.find((r) => r.party === party);
+      break;
+  }
+  dataset.push(partyResultToAdd);
+  dataset = dataset.sort((a, b) => b.result - a.result);
+
+  xScale.domain([0, d3.max(dataset, (d) => d.result)]);
+
+  const bars = svg.selectAll("rect").data(dataset, key);
+  const labels = svg.selectAll("text").data(dataset, key);
+
+  svg
+    .selectAll("rect")
+    .data(dataset, key)
+    .enter()
+    .append("rect")
+    .attr("x", (d) => -xScale(d.result))
+    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("width", (d) => xScale(d.result))
+    .attr("height", h / dataset.length - barPadding)
+    .style(
+      "fill",
+      (d) => partyColours.find((pC) => pC.party === d.party).colour
+    )
+    .merge(bars)
+    .transition()
+    .duration(transitionDuration)
+    .attr("x", 0)
+    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("width", (d) => xScale(d.result))
+    .attr("height", h / dataset.length - barPadding)
+    .style(
+      "fill",
+      (d) => partyColours.find((pC) => pC.party === d.party).colour
+    );
+
+  svg
+    .selectAll("text")
+    .data(dataset, key)
+    .enter()
+    .append("text")
+    .text((d) => `${d.party}: ${d.result}%`)
+    .attr("x", (d) => -xScale(d.result) + 5)
+    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .style("fill", "white")
+    .merge(labels)
+    .transition()
+    .duration(transitionDuration)
+    .text((d) => `${d.party}: ${d.result}%`)
+    .attr("x", 5)
+    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .style("fill", "white");
+}
+
+function removeParty(party) {
+  const partyIndex = dataset.findIndex((p) => p.party === party);
+  if (partyIndex > -1) {
+    dataset.splice(partyIndex, 1);
+  }
+
+  xScale.domain([0, d3.max(dataset, (d) => d.result)]);
+
+  svg
+    .selectAll("rect")
+    .data(dataset, key)
+    .exit()
+    .transition()
+    .duration(transitionDuration)
+    .attr("x", (d) => -xScale(d.result))
+    .remove();
+
+  svg
+    .selectAll("text")
+    .data(dataset, key)
+    .exit()
+    .transition()
+    .duration(transitionDuration)
+    .attr("x", (d) => -xScale(d.result))
+    .remove();
+
+  svg
+    .selectAll("rect")
+    .data(dataset, key)
+    .transition()
+    .delay(transitionDuration)
+    .duration(transitionDuration)
+    .attr("x", 0)
+    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("width", (d) => xScale(d.result))
+    .attr("height", h / dataset.length - barPadding)
+    .style(
+      "fill",
+      (d) => partyColours.find((pC) => pC.party === d.party).colour
+    );
+
+  svg
+    .selectAll("text")
+    .data(dataset, key)
+    .transition()
+    .delay(transitionDuration)
+    .duration(transitionDuration)
+    .text((d) => `${d.party}: ${d.result}%`)
+    .attr("x", 5)
+    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .style("fill", "white");
+}
 
 function calculateChartSize() {
   w = chart.clientWidth;
@@ -165,7 +290,7 @@ function resize() {
 
   svg
     .selectAll("rect")
-    .data(dataset)
+    .data(dataset, key)
     .transition()
     .duration(transitionDuration)
     .attr("x", 0)
@@ -175,7 +300,7 @@ function resize() {
 
   svg
     .selectAll("text")
-    .data(dataset)
+    .data(dataset, key)
     .transition()
     .duration(transitionDuration)
     .attr("x", 5)
