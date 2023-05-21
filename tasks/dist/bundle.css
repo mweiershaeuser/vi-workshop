@@ -12723,10 +12723,6 @@ html {
   .md\:flex-row {
     flex-direction: row;
   }
-
-  .md\:flex-col {
-    flex-direction: column;
-  }
 }
 
 @media (prefers-color-scheme: dark) {

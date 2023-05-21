@@ -77,11 +77,62 @@ function initChart() {
 
 /**
  * AUFGABE 1
+ *
+ * Gegeben ist ein Balkendiagramm, welches die Wahlergebnisse der deutschen Bundestagswahl aus dem Jahr 2021 visualisiert.
+ * Darin werden die Parteien mit ihrer jeweiligen Farbe und der zugehörigen Prozentverteilung angezeigt.
+ *
+ * 1. Implementiere eine updateYear() Funktion, die es ermöglicht die Wahlergebnisse aus dem Jahr 2017 anzuzeigen.
+ * 2. Setze eine Transition um, die einen flüssigen Übergang zwischen den Daten beider Jahren ermöglicht.
+ * 3. Beeinflusse die Dauer, die Bewegung und Verzögerung der Transition mit den zugehörigen Methoden.
+ * 4. Bonus: implementiere eine on()-Transition, welche die Balken während des Transition-Vorgangs grau färbt.
  */
 
-// Listen for Events
+/**
+ * Event Listener hier hinzufügen.
+ *
+ * Tipps:
+ * - ID "yearFilter" selected den Wahl-Switcher.
+ * - Das Event "change" liefert das ausgewählte Jahr über "event.target.value".
+ * - Jahr in globaler Variable zwischenspeichern!
+ */
 
-function updateYear() {}
+// Code goes here
+
+function updateYear() {
+  /**
+   * Datensatz entsprechend des ausgewählten Jahres setzen.
+   */
+
+  // Code goes here
+
+  /**
+   * xScale anpassen.
+   */
+
+  // Code goes here
+  yScale.domain(d3.range(dataset.length));
+
+  /**
+   * Rechtecke der Visualisierung updaten.
+   *
+   * Tipps:
+   * - Für die Positionierung auf der y-Achse, nutze "(d, i) => yScale(i)".
+   * - Um die Höhe der Balken zu ermitteln, nutze "yScale.bandwidth()".
+   * - Nutze das Array "partyColours", die Farbe der zum Balken gehörigen Partei zu finden (Array.find nutzen!).
+   */
+
+  // Code goes here
+
+  /**
+   * Labels der Visualisierung updaten.
+   *
+   * Tipps:
+   * - Nutze den Wert der Variablen "textOffsetX" zur Positionierung auf der x-Achse.
+   * - Positioniere das Label mit Versatz zum Balken auf der Y-Achse: "(d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor".
+   */
+
+  // Code goes here
+}
 
 /****** ENDE AUFGABE 1 ******/
 
