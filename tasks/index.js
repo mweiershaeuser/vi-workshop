@@ -128,7 +128,7 @@ function updateYear() {
    *
    * Tipps:
    * - Nutze den Wert der Variablen "textOffsetX" zur Positionierung auf der x-Achse.
-   * - Positioniere das Label mit Versatz zum Balken auf der Y-Achse: "(d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor".
+   * - Positioniere das Label mit Versatz zum Balken auf der y-Achse: "(d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor".
    */
 
   // Code goes here
@@ -138,13 +138,158 @@ function updateYear() {
 
 /**
  * AUFGABE 2
+ *
+ * Setze eine removeParty() und eine addParty() Funktion um, welche es ermöglichen, Parteien über den gegebenen Filter in der oberen Leiste aus der Visualisierung zu entfernen und wieder hinzuzufügen.
+ * Hinweis: Nehme im Zuge der Aufgabe einen Data Join mit der gegebenen Key Function vor.
  */
 
-// Listen for Events
+d3.selectAll(".partyFilter").on("click", (event) => {
+  if (event.target.checked) {
+    addParty(event.target.value);
+  } else {
+    removeParty(event.target.value);
+  }
+});
 
-function addParty(party) {}
+function removeParty(party) {
+  /**
+   * Daten der ausgewählten Partei finden und aus dem Datensatz entfernen.
+   *
+   * Tipps:
+   * - Ermittle den Index der Partei-Daten mit Array.findIndex.
+   * - Entferne die Daten mit Array.splice.
+   */
 
-function removeParty(party) {}
+  // Code goes here
+
+  xScale.domain([0, d3.max(dataset, (d) => d.result)]);
+  yScale.domain(d3.range(dataset.length));
+
+  /**
+   * Balken der Partei aus der Visualisierung entfernen.
+   *
+   * Tipps:
+   * - Denke daran, die definierte Funktion "key" zu nutzen, um einen Data Join vorzunehmen.
+   */
+
+  // Code goes here
+
+  /**
+   * Label der Partei aus der Visualisierung entfernen.
+   */
+
+  // Code goes here
+
+  // Die übrigen Balken werden geupdated.
+  svg
+    .selectAll("rect")
+    .data(dataset, key)
+    .transition()
+    .delay(transitionDuration)
+    .duration(transitionDuration)
+    .on("start", function () {
+      d3.select(this).style("fill", "grey");
+    })
+    .attr("x", 0)
+    .attr("y", (d, i) => yScale(i))
+    .attr("width", (d) => xScale(d.result))
+    .attr("height", yScale.bandwidth())
+    .style(
+      "fill",
+      (d) => partyColours.find((pC) => pC.party === d.party).colour
+    );
+
+  // Die übrigen Labels werden geupdated.
+  svg
+    .selectAll("text")
+    .data(dataset, key)
+    .transition()
+    .delay(transitionDuration)
+    .duration(transitionDuration)
+    .text((d) => `${d.party}: ${d.result}%`)
+    .attr("x", textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
+    .style("fill", "white");
+}
+
+function addParty(party) {
+  let partyResultToAdd;
+  switch (year) {
+    case "2021":
+      partyResultToAdd = elections2021.find((r) => r.party === party);
+      break;
+
+    case "2017":
+      partyResultToAdd = elections2017.find((r) => r.party === party);
+      break;
+
+    default:
+      partyResultToAdd = elections2021.find((r) => r.party === party);
+      break;
+  }
+  dataset.push(partyResultToAdd);
+  dataset = dataset.sort((a, b) => b.result - a.result);
+
+  xScale.domain([0, d3.max(dataset, (d) => d.result)]);
+  yScale.domain(d3.range(dataset.length));
+
+  // Die Selections der bisherigen Balken und Labels werden zwischengespeichert.
+  const bars = svg.selectAll("rect").data(dataset, key);
+  const labels = svg.selectAll("text").data(dataset, key);
+
+  /**
+   * Balken der Partei zur Visualisierung hinzufügen.
+   *
+   * Tipps:
+   * - Für die Positionierung auf der y-Achse, nutze "(d, i) => yScale(i)".
+   * - Um die Höhe der Balken zu ermitteln, nutze "yScale.bandwidth()".
+   */
+
+  // Code goes here
+
+  /**
+   * Merge den hinzugefügten Balken mit den Balken der bestehenden Visualisierung.
+   * Nutze die zwischengespeicherten "bars".
+   */
+
+  // Code goes here
+
+  /* Nutze den folgenden Code, um die richtigen Attribute beim Merge zu aktualisieren.
+  .attr("x", 0)
+  .attr("y", (d, i) => yScale(i))
+  .attr("width", (d) => xScale(d.result))
+  .attr("height", yScale.bandwidth())
+  .style(
+    "fill",
+    (d) => partyColours.find((pC) => pC.party === d.party).colour
+  );
+  */
+
+  /**
+   * Label der Partei zur Visualisierung hinzufügen.
+   *
+   * Tipps:
+   * - Nutze den Wert der Variablen "textOffsetX" zur Positionierung auf der x-Achse.
+   * - Positioniere das Label mit Versatz zum Balken auf der y-Achse: "(d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor".
+   */
+
+  // Code goes here
+
+  /**
+   * Merge das hinzugefügte Label mit den Labels der bestehenden Visualisierung.
+   * Nutze die zwischengespeicherten "labels".
+   */
+
+  // Code goes here
+
+  /* Nutze den folgenden Code, um die richtigen Attribute beim Merge zu aktualisieren.
+    .duration(transitionDuration)
+    .text((d) => `${d.party}: ${d.result}%`)
+    .attr("x", textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
+    .style("fill", "white");
+    */
+}
 
 /****** ENDE AUFGABE 2 ******/
 
