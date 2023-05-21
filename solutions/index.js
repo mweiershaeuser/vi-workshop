@@ -9,13 +9,15 @@ const key = (d) => d.party;
 let w = 0;
 let h = 0;
 
-const barPadding = 5;
-const textOffset = 5;
+const barPadding = 0.1;
+const textOffsetX = 5;
+const textOffsetYFactor = 0.6;
 
 let chart;
 
 let svg;
 let xScale;
+let yScale;
 
 let year;
 
@@ -42,15 +44,21 @@ function initChart() {
     .domain([0, d3.max(dataset, (d) => d.result)])
     .range([0, w]);
 
+  yScale = d3
+    .scaleBand()
+    .domain(d3.range(dataset.length))
+    .rangeRound([0, h])
+    .paddingInner(barPadding);
+
   svg
     .selectAll("rect")
     .data(dataset, key)
     .enter()
     .append("rect")
     .attr("x", 0)
-    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
-    .attr("height", h / dataset.length - barPadding)
+    .attr("height", yScale.bandwidth())
     .style(
       "fill",
       (d) => partyColours.find((pC) => pC.party === d.party).colour
@@ -62,8 +70,8 @@ function initChart() {
     .enter()
     .append("text")
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", textOffset)
-    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .attr("x", textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
     .style("fill", "white");
 }
 
@@ -90,14 +98,15 @@ function updateYear() {
   }
 
   xScale.domain([0, d3.max(dataset, (d) => d.result)]);
+  yScale.domain(d3.range(dataset.length));
 
   svg
     .selectAll("rect")
     .data(dataset, key)
     .attr("x", 0)
-    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
-    .attr("height", h / dataset.length - barPadding)
+    .attr("height", yScale.bandwidth())
     .style(
       "fill",
       (d) => partyColours.find((pC) => pC.party === d.party).colour
@@ -107,8 +116,8 @@ function updateYear() {
     .selectAll("text")
     .data(dataset, key)
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", textOffset)
-    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .attr("x", textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
     .style("fill", "white");
 }
 
@@ -130,6 +139,7 @@ function updateYearWithTransition() {
   }
 
   xScale.domain([0, d3.max(dataset, (d) => d.result)]);
+  yScale.domain(d3.range(dataset.length));
 
   svg
     .selectAll("rect")
@@ -137,9 +147,9 @@ function updateYearWithTransition() {
     .transition()
     .duration(transitionDuration)
     .attr("x", 0)
-    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
-    .attr("height", h / dataset.length - barPadding)
+    .attr("height", yScale.bandwidth())
     .style(
       "fill",
       (d) => partyColours.find((pC) => pC.party === d.party).colour
@@ -151,8 +161,8 @@ function updateYearWithTransition() {
     .transition()
     .duration(transitionDuration)
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", textOffset)
-    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .attr("x", textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
     .style("fill", "white");
 }
 
@@ -183,6 +193,7 @@ function addParty(party) {
   dataset = dataset.sort((a, b) => b.result - a.result);
 
   xScale.domain([0, d3.max(dataset, (d) => d.result)]);
+  yScale.domain(d3.range(dataset.length));
 
   const bars = svg.selectAll("rect").data(dataset, key);
   const labels = svg.selectAll("text").data(dataset, key);
@@ -193,9 +204,9 @@ function addParty(party) {
     .enter()
     .append("rect")
     .attr("x", (d) => -xScale(d.result))
-    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
-    .attr("height", h / dataset.length - barPadding)
+    .attr("height", yScale.bandwidth())
     .style(
       "fill",
       (d) => partyColours.find((pC) => pC.party === d.party).colour
@@ -204,9 +215,9 @@ function addParty(party) {
     .transition()
     .duration(transitionDuration)
     .attr("x", 0)
-    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
-    .attr("height", h / dataset.length - barPadding)
+    .attr("height", yScale.bandwidth())
     .style(
       "fill",
       (d) => partyColours.find((pC) => pC.party === d.party).colour
@@ -218,15 +229,15 @@ function addParty(party) {
     .enter()
     .append("text")
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", (d) => -xScale(d.result) + textOffset)
-    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .attr("x", (d) => -xScale(d.result) + textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
     .style("fill", "white")
     .merge(labels)
     .transition()
     .duration(transitionDuration)
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", textOffset)
-    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .attr("x", textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
     .style("fill", "white");
 }
 
@@ -237,6 +248,7 @@ function removeParty(party) {
   }
 
   xScale.domain([0, d3.max(dataset, (d) => d.result)]);
+  yScale.domain(d3.range(dataset.length));
 
   svg
     .selectAll("rect")
@@ -263,9 +275,9 @@ function removeParty(party) {
     .delay(transitionDuration)
     .duration(transitionDuration)
     .attr("x", 0)
-    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
-    .attr("height", h / dataset.length - barPadding)
+    .attr("height", yScale.bandwidth())
     .style(
       "fill",
       (d) => partyColours.find((pC) => pC.party === d.party).colour
@@ -278,8 +290,8 @@ function removeParty(party) {
     .delay(transitionDuration)
     .duration(transitionDuration)
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", textOffset)
-    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
+    .attr("x", textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
     .style("fill", "white");
 }
 
@@ -333,6 +345,7 @@ function resize() {
   svg.attr("width", w).attr("height", h);
 
   xScale.range([0, w]);
+  yScale.rangeRound([0, h]);
 
   svg
     .selectAll("rect")
@@ -340,17 +353,17 @@ function resize() {
     .transition()
     .duration(transitionDuration)
     .attr("x", 0)
-    .attr("y", (d, i) => i * (h / dataset.length))
+    .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
-    .attr("height", h / dataset.length - barPadding);
+    .attr("height", yScale.bandwidth());
 
   svg
     .selectAll("text")
     .data(dataset, key)
     .transition()
     .duration(transitionDuration)
-    .attr("x", textOffset)
-    .attr("y", (d, i) => (i + 0.5) * (h / dataset.length));
+    .attr("x", textOffsetX)
+    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor);
 }
 
 document.addEventListener("DOMContentLoaded", init, false);
