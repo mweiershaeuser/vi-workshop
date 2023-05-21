@@ -21,6 +21,8 @@ let year;
 let transitionDuration = 1000;
 
 function init() {
+  resetCheckboxes();
+
   chart = document.getElementById("chart");
   calculateChartSize();
   initChart();
@@ -70,6 +72,8 @@ d3.select("#yearFilter").on("change", (event) => {
 });
 
 function updateYear() {
+  resetPartyFilter();
+
   switch (year) {
     case "2021":
       dataset = [...elections2021.sort((a, b) => b.result - a.result)];
@@ -108,6 +112,8 @@ function updateYear() {
 }
 
 function updateYearWithTransition() {
+  resetPartyFilter();
+
   switch (year) {
     case "2021":
       dataset = [...elections2021.sort((a, b) => b.result - a.result)];
@@ -274,6 +280,49 @@ function removeParty(party) {
     .attr("x", 5)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
     .style("fill", "white");
+}
+
+d3.select("#partyFilterResetBtn").on("click", () => {
+  resetPartyFilter();
+});
+
+function resetPartyFilter() {
+  let currentRawResults;
+  switch (year) {
+    case "2021":
+      currentRawResults = [...elections2021];
+      break;
+
+    case "2017":
+      currentRawResults = [...elections2017];
+      break;
+
+    default:
+      currentRawResults = [...elections2021];
+      break;
+  }
+
+  console.log(dataset);
+  console.log(currentRawResults);
+
+  const missingResults = currentRawResults.filter(
+    (r) => !dataset.some((d) => d.party === r.party)
+  );
+  console.log(missingResults);
+  missingResults.forEach((mR) => {
+    addParty(mR.party);
+  });
+
+  resetCheckboxes();
+}
+
+function resetCheckboxes() {
+  const checkboxes = document.getElementsByClassName("partyFilter");
+  for (const key in checkboxes) {
+    if (Object.hasOwnProperty.call(checkboxes, key)) {
+      checkboxes[key].checked = true;
+    }
+  }
 }
 
 function calculateChartSize() {
