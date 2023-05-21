@@ -9,12 +9,15 @@
   ],
   "license": "MIT",
   "scripts": {
-    "start": "concurrently -n build,build:solutions,serve \"npm run build\" \"npm run build:solutions\" \"npm run serve\"",
+    "start": "concurrently -n build,build:solutions,build:tasks,serve \"npm run build\" \"npm run build:solutions\" \"npm run build:tasks\" \"npm run serve\"",
     "build": "npx tailwindcss -i ./styles.css -o ./dist/bundle.css --watch",
     "serve": "live-server ./ --ignore=.git",
     "start:solutions": "concurrently -n build,serve \"npm run build:solutions\" \"npm run serve:solutions\"",
     "build:solutions": "npx tailwindcss -c ./solutions/tailwind.config.js -i ./solutions/styles.css -o ./solutions/dist/bundle.css --watch",
-    "serve:solutions": "live-server solutions --ignore=.git"
+    "serve:solutions": "live-server solutions --ignore=.git",
+    "start:tasks": "concurrently -n build,serve \"npm run build:tasks\" \"npm run serve:tasks\"",
+    "build:tasks": "npx tailwindcss -c ./tasks/tailwind.config.js -i ./tasks/styles.css -o ./tasks/dist/bundle.css --watch",
+    "serve:tasks": "live-server tasks --ignore=.git"
   },
   "dependencies": {
     "daisyui": "^2.51.6"

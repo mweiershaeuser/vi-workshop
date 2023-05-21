@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="cyberpunk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Aufgaben - VI Workshop</title>
+
+    <link rel="stylesheet" href="./dist/bundle.css" />
+  </head>
+  <body>
+    <div class="min-h-screen flex flex-col justify-between">
+      <header class="navbar m-4 w-auto rounded-lg bg-base-300">
+        <div class="navbar-start"></div>
+        <div class="navbar-center">
+          <a class="btn btn-ghost normal-case text-xl" href="../"
+            >VI Workshop</a
+          >
+        </div>
+        <div class="navbar-end"></div>
+      </header>
+
+      <main class="p-4">
+        <div class="flex flex-col">
+          <div class="flex justify-end mb-3">
+            <select id="yearFilter" class="select select-bordered">
+              <option selected value="2021">Bundestagswahl 2021</option>
+              <option value="2017">Bundestagswahl 2017</option>
+            </select>
+          </div>
+
+          <div id="partyFilter" class="flex flex-wrap justify-end gap-3 mb-3">
+            <label class="label cursor-pointer">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-primary mr-1 partyFilter"
+                value="AfD"
+              />
+              <span class="label-text">AfD</span>
+            </label>
+            <label class="label cursor-pointer">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-primary mr-1 partyFilter"
+                value="CDU"
+              />
+              <span class="label-text">CDU</span>
+            </label>
+            <label class="label cursor-pointer">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-primary mr-1 partyFilter"
+                value="CSU"
+              />
+              <span class="label-text">CSU</span>
+            </label>
+            <label class="label cursor-pointer">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-primary mr-1 partyFilter"
+                value="FDP"
+              />
+              <span class="label-text">FDP</span>
+            </label>
+            <label class="label cursor-pointer">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-primary mr-1 partyFilter"
+                value="GRÜNE"
+              />
+              <span class="label-text">GRÜNE</span>
+            </label>
+            <label class="label cursor-pointer">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-primary mr-1 partyFilter"
+                value="LINKE"
+              />
+              <span class="label-text">LINKE</span>
+            </label>
+            <label class="label cursor-pointer">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-primary mr-1 partyFilter"
+                value="SPD"
+              />
+              <span class="label-text">SPD</span>
+            </label>
+            <label class="label cursor-pointer">
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-primary mr-1 partyFilter"
+                value="Sonstige"
+              />
+              <span class="label-text">Sonstige</span>
+            </label>
+            <button id="partyFilterResetBtn" class="btn btn-primary">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full bg-white p-5 rounded-lg">
+          <div id="chart" class="w-full overflow-x-auto"></div>
+        </div>
+      </main>
+
+      <footer
+        class="footer footer-center rounded-lg m-4 p-4 w-auto bg-base-300 text-base-content"
+      >
+        <div>
+          <p>
+            Copyright © 2023, made with ❤ by
+            <a
+              href="https://github.com/aileenjurkosek"
+              target="_blank"
+              class="hover:underline"
+              >Aileen Jurkosek</a
+            >
+            &
+            <a
+              href="https://github.com/mweiershaeuser"
+              target="_blank"
+              class="hover:underline"
+              >Melvin Weiershäuser</a
+            >
+          </p>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>
