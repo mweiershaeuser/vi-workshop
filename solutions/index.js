@@ -4,12 +4,13 @@ import { elections2017, elections2021, partyColours } from "./data/data.js";
 
 let dataset;
 
-let key = (d) => d.party;
+const key = (d) => d.party;
 
 let w = 0;
 let h = 0;
 
-let barPadding = 5;
+const barPadding = 5;
+const textOffset = 5;
 
 let chart;
 
@@ -18,7 +19,7 @@ let xScale;
 
 let year;
 
-let transitionDuration = 1000;
+const transitionDuration = 1000;
 
 function init() {
   resetCheckboxes();
@@ -61,7 +62,7 @@ function initChart() {
     .enter()
     .append("text")
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", 5)
+    .attr("x", textOffset)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
     .style("fill", "white");
 }
@@ -106,7 +107,7 @@ function updateYear() {
     .selectAll("text")
     .data(dataset, key)
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", 5)
+    .attr("x", textOffset)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
     .style("fill", "white");
 }
@@ -150,7 +151,7 @@ function updateYearWithTransition() {
     .transition()
     .duration(transitionDuration)
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", 5)
+    .attr("x", textOffset)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
     .style("fill", "white");
 }
@@ -217,14 +218,14 @@ function addParty(party) {
     .enter()
     .append("text")
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", (d) => -xScale(d.result) + 5)
+    .attr("x", (d) => -xScale(d.result) + textOffset)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
     .style("fill", "white")
     .merge(labels)
     .transition()
     .duration(transitionDuration)
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", 5)
+    .attr("x", textOffset)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
     .style("fill", "white");
 }
@@ -277,7 +278,7 @@ function removeParty(party) {
     .delay(transitionDuration)
     .duration(transitionDuration)
     .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", 5)
+    .attr("x", textOffset)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length))
     .style("fill", "white");
 }
@@ -302,13 +303,9 @@ function resetPartyFilter() {
       break;
   }
 
-  console.log(dataset);
-  console.log(currentRawResults);
-
   const missingResults = currentRawResults.filter(
     (r) => !dataset.some((d) => d.party === r.party)
   );
-  console.log(missingResults);
   missingResults.forEach((mR) => {
     addParty(mR.party);
   });
@@ -352,7 +349,7 @@ function resize() {
     .data(dataset, key)
     .transition()
     .duration(transitionDuration)
-    .attr("x", 5)
+    .attr("x", textOffset)
     .attr("y", (d, i) => (i + 0.5) * (h / dataset.length));
 }
 
