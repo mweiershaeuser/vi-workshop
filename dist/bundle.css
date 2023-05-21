@@ -2227,10 +2227,6 @@ html {
   flex-direction: column;
 }
 
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
 .justify-between {
   justify-content: space-between;
 }
@@ -2277,9 +2273,5 @@ html {
 @media (min-width: 768px) {
   .md\:flex-row {
     flex-direction: row;
-  }
-
-  .md\:flex-col {
-    flex-direction: column;
   }
 }
