@@ -77,7 +77,7 @@ function initChart() {
 
 d3.select("#yearFilter").on("change", (event) => {
   year = event.target.value;
-  updateYearWithTransition();
+  updateYear();
 });
 
 function updateYear() {
@@ -103,49 +103,11 @@ function updateYear() {
   svg
     .selectAll("rect")
     .data(dataset, key)
-    .attr("x", 0)
-    .attr("y", (d, i) => yScale(i))
-    .attr("width", (d) => xScale(d.result))
-    .attr("height", yScale.bandwidth())
-    .style(
-      "fill",
-      (d) => partyColours.find((pC) => pC.party === d.party).colour
-    );
-
-  svg
-    .selectAll("text")
-    .data(dataset, key)
-    .text((d) => `${d.party}: ${d.result}%`)
-    .attr("x", textOffsetX)
-    .attr("y", (d, i) => yScale(i) + yScale.bandwidth() * textOffsetYFactor)
-    .style("fill", "white");
-}
-
-function updateYearWithTransition() {
-  resetPartyFilter();
-
-  switch (year) {
-    case "2021":
-      dataset = [...elections2021.sort((a, b) => b.result - a.result)];
-      break;
-
-    case "2017":
-      dataset = [...elections2017.sort((a, b) => b.result - a.result)];
-      break;
-
-    default:
-      dataset = [...elections2021.sort((a, b) => b.result - a.result)];
-      break;
-  }
-
-  xScale.domain([0, d3.max(dataset, (d) => d.result)]);
-  yScale.domain(d3.range(dataset.length));
-
-  svg
-    .selectAll("rect")
-    .data(dataset, key)
     .transition()
     .duration(transitionDuration)
+    .on("start", function () {
+      d3.select(this).style("fill", "grey");
+    })
     .attr("x", 0)
     .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
@@ -214,6 +176,9 @@ function addParty(party) {
     .merge(bars)
     .transition()
     .duration(transitionDuration)
+    .on("start", function () {
+      d3.select(this).style("fill", "grey");
+    })
     .attr("x", 0)
     .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
@@ -256,6 +221,9 @@ function removeParty(party) {
     .exit()
     .transition()
     .duration(transitionDuration)
+    .on("start", function () {
+      d3.select(this).style("fill", "grey");
+    })
     .attr("x", (d) => -xScale(d.result))
     .remove();
 
@@ -274,6 +242,9 @@ function removeParty(party) {
     .transition()
     .delay(transitionDuration)
     .duration(transitionDuration)
+    .on("start", function () {
+      d3.select(this).style("fill", "grey");
+    })
     .attr("x", 0)
     .attr("y", (d, i) => yScale(i))
     .attr("width", (d) => xScale(d.result))
